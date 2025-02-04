@@ -32,11 +32,18 @@ const userSchema= new mongoose.Schema({
         type:String,
         required:true,
         minLength:[8,"Password must contain atleast 8 characters"],
-        maxLength:[32,"Password cannot exceed 32 characters."]
+        maxLength:[32,"Password cannot exceed 32 characters."],
+        select:false
     },
     resume:{
         public_id:String,
-        url:String
+        url:String,
+        resourceType: {   // Add this field to indicate the resource type
+        type: String,
+        enum: ['raw', 'image', 'video'],  // Define possible resource types
+        default: 'raw',  // Set a default if appropriate
+    },
+        
     },
     coverLetter:{
         type:String
@@ -51,5 +58,24 @@ const userSchema= new mongoose.Schema({
         default:Date.now,
     }
 })
+
+userSchema.pre("save",async function (next){
+    if(!this.isModified("password")){
+        next();
+    }
+    this.password=await bcrypt.hash(this.password,10);
+});
+
+userSchema.methods.comparePassword=async function(enteredPassword){
+    return await bcrypt.compare(enteredPassword,this.password);
+};
+
+userSchema.methods.getJWTToken= function(){
+    return jwt.sign({id:this._id},process.env.JWT_SECRET_KEY,{
+        expiresIn:process.env.JWT_EXPIRE,
+    })
+}
+
+
 
 export const User=mongoose.model("User",userSchema);
