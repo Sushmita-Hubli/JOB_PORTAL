@@ -6,7 +6,7 @@ import { sendEmail } from "../utils/sendEmail.js"
 export const newsLetterCron =()=>{
     cron.schedule("*/1 * * * *",async()=>{
         const jobs=await Job.find({newsLettersSent:false});
-        for(const job in jobs){
+        for(const job of jobs){
             try{
                 const filterUsers=await User.find({
                     $or:[
