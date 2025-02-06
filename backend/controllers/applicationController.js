@@ -27,7 +27,7 @@ export const postApplication=catchAsyncErrors(async(req,res,next)=>{
         return next(new ErrorHandler("Job not found.",404));
     }
     const isAlreadyApplied=await Application.findOne({
-        "jobInfo.id":id,
+        "jobInfo.jobId":id,
         "jobSeekerInfo.id":req.user._id,
     });
     if(isAlreadyApplied)
@@ -85,7 +85,58 @@ res.status(201).json({
 
 
 });
-export const employerGetAllApplication =catchAsyncErrors(async(req,res,next)=>{})
-export const jobSeekerGetAllApplication=catchAsyncErrors(async(req,res,next)=>{})
-export const deleteApplication=catchAsyncErrors(async(req,res,next)=>{})
+export const employerGetAllApplication =catchAsyncErrors(async(req,res,next)=>{
+    const{_id}=req.user;
+    const applications=await Application.find({
+        "employerInfo.id":_id,
+        "deletedBy.employer":false,
+    });
+    res.status(200).json({
+        success:true,
+        applications,
+    })
+})
+export const jobSeekerGetAllApplication=catchAsyncErrors(async(req,res,next)=>{
+    const{_id}=req.user;
+    const applications=await Application.find({
+        "jobSeekerInfo.id":_id,
+        "deletedBy.jobseeker":false,
+    });
+    res.status(200).json({
+        success:true,
+        applications,
+    })
+})
+export const deleteApplication=catchAsyncErrors(async(req,res,next)=>{
+    const {id} =req.params;
+    const application=await Application.findById(id);
+    if(!application)
+    {
+        return next(new ErrorHandler("Application not found.",404));
+    }
+    const {role} =req.user;
+    switch(role){
+        case "Job Seeker":
+            application.deletedBy.jobseeker=true;
+            await application.save()
+            break;
+
+        case "Employer":
+            application.deletedBy.employer=true;
+            await application.save()
+            break;
+
+        default:
+            console.log("Default case for application delete function.");
+            break;
+    }
+    if(application.deletedBy.employer === true && application.deletedBy.jobseeker===true)
+    {
+        await application.deleteOne();
+    }
+    res.status(200).json({
+        success:true,
+        message:"Application Deleted."
+    })
+})
 
