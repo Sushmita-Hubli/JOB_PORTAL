@@ -56,10 +56,26 @@ const applicationSlice =createSlice({
 
         },
         failureForPostApplication(state,action){
-            state.loading=true;
+            state.loading=false;
             state.error=action.payload;
             state.message=null;
 
+        },
+        
+        requestForDeleteApplication(state,action){
+            state.loading=true;
+            state.error=null;
+            state.message=null;
+        },
+        successForDeleteApplication(state,action){
+            state.loading=false;
+            state.error=null;
+            state.message=action.payload;
+        },
+        failureForDeleteApplication(state,action){
+            state.loading=false;
+            state.error=action.payload;
+            state.message=null;
         },
         clearAllErrors(state,action){
             state.error=null;
@@ -137,11 +153,30 @@ export const postApplication = (data,jobId)=>async(dispatch)=>{
     catch(error)
     {
 
-        dispatch(applicationSlice.actions.failureForPostApplication(error.response.dat.message));
+        dispatch(applicationSlice.actions.failureForPostApplication(error.response.data.message));
 
     }
 }
 
+export const deletedApplication=(id)=>async(dispatch)=>{
+    dispatch(applicationSlice.actions.requestForDeleteApplication());
+    try{
+        const response=await axios.delete(
+            `http://localhost:4000/api/v1/application/delete/${id}`,
+            {
+                withCredentials:true
+            }
+
+        );
+        dispatch(applicationSlice.actions.successForDeleteApplication(response.data.message));
+        dispatch(clearAllApplicationErrors());
+
+
+    }catch(error)
+    {
+dispatch(applicationSlice.actions.failureForAllApplications(error.response.data.message));
+    }
+}
 
 
 export const clearAllApplicationErrors=()=>(dispatch)=>{
@@ -150,7 +185,7 @@ dispatch(applicationSlice.actions.clearAllErrors())
 
 
 export const resetApplicationSlice =()=>(dispatch)=>{
-    dispatch(applicationSlice.actions.resetApplicationSlice);
+    dispatch(applicationSlice.actions.resetApplicationSlice());
 };
 
 export default applicationSlice.reducer;

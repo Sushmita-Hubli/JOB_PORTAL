@@ -47,13 +47,13 @@ const PostApplication = () => {
 
   useEffect(() => {
     console.log("User data:", user); // Check if user data is coming from the backend
-    if (user) {
-      setName(user.name || "");
-      setEmail(user.email || "");
-      setPhone(user.phone || "");
-      setAddress(user.address || "");
-      setCoverLetter(user.coverLetter || "");
-      setResume((user.resume && user.resume.url) || "");
+    if(user){
+      setName(user.name||"");
+      setEmail(user.email||"");
+      setPhone(user.phone||"");
+      setAddress(user.address||"");
+      setCoverLetter(user.coverLetter||"");
+      setResume((user.resume && user.resume.url)||"");
     }
     if (error) {
       toast.error(error);
@@ -63,8 +63,9 @@ const PostApplication = () => {
       toast.success(message);
       dispatch(resetApplicationSlice());
     }
+  
     dispatch(fetchSingleJob(jobId));
-  }, [dispatch, error, message, jobId, user]);
+  }, [dispatch, error, message, jobId,user]);
 
   let qualifications = [];
   let responsibilities = [];
@@ -87,6 +88,7 @@ const PostApplication = () => {
   return (
     <>
       <section className="application_page">
+      
         <form>
           <h3>Application Form</h3>
           <div>
@@ -125,9 +127,10 @@ const PostApplication = () => {
               onChange={(e) => setAddress(e.target.value)}
             />
           </div>
-         
+         {
+          user && user.role==="Job Seeker" &&(
             <>
-              <div>
+            <div>
                 <label>Coverletter</label>
                 <textarea
                   value={coverLetter}
@@ -135,15 +138,22 @@ const PostApplication = () => {
                   rows={10}
                 />
               </div>
+
               <div>
                 <label>Resume</label>
                 <input type="file" onChange={resumeHandler} />
               </div>
-            </>
+              </>
+            
+          )
+         }
+            
+           
+            
           
-
-        
-            <div style={{ alignItems: "flex-end" }}>
+{
+(isAuthenticated && user.role==="Job Seeker") &&
+  <div style={{ alignItems: "flex-end" }}>
               <button
                 className="btn"
                 onClick={handlePostApplication}
@@ -152,6 +162,10 @@ const PostApplication = () => {
                 Apply
               </button>
             </div>
+
+}
+        
+         
           
         </form>
 

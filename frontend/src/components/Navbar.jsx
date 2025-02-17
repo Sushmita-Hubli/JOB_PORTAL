@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
+import logo from "../logo1.png"; // Adjust path as per the file location
+
+
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const { isAuthenticated } = useSelector((state) => state.user);
@@ -9,7 +12,8 @@ const Navbar = () => {
     <>
       <nav className={show ? "navbar show_navbar" : "navbar"}>
         <div className="logo">
-          <img src="/logo.png" alt="logo" />
+        <img src={logo} alt="logo" />
+
           <h4>NicheNest</h4>
         </div>
         <div className="links">

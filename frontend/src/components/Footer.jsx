@@ -6,6 +6,7 @@ import {
   FaGithub,
   FaLinkedin,
 } from "react-icons/fa6";
+import logo from "../logo1.png"; // Adjust path as per the file location
 
 const Footer = () => {
   const { isAuthenticated } = useSelector((state) => state.user);
@@ -13,7 +14,7 @@ const Footer = () => {
     <>
       <footer>
         <div>
-          <img src="/logo.png" alt="logo" />
+         <img src={logo} alt="logo" />
         </div>
         <div>
           <h4>Support</h4>
@@ -63,7 +64,7 @@ const Footer = () => {
         </div>
       </footer>
       <div className="copyright">
-        &copy; CopyRight 2024. All Rights Reserved By CodeWithZeeshu
+        &copy; CopyRight 2024. All Rights Reserved By Sushmita
       </div>
     </>
   );

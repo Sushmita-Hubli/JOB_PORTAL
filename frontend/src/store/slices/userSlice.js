@@ -152,7 +152,7 @@ export const getUser=()=>async(dispatch)=>{
             withCredentials:true,
             
         });
-        dispatch(userSlice.actions.fetchUserSuccess(response.data));
+        dispatch(userSlice.actions.fetchUserSuccess(response.data.user));
         dispatch(userSlice.actions.clearAllErrors());
 
 
